@@ -11,13 +11,16 @@
 #include <set>
 #include <vector>
 
-typedef std::pair<char, int> letter_freq;
-typedef std::function<bool(letter_freq, letter_freq)> comparator;
-
 static const int ALPHABET_SIZE = 26;
 static const int ASCII_ALPHA_LOWER_BOUND = 97;
 static const int ASCII_ALPHA_UPPER_BOUND = ASCII_ALPHA_LOWER_BOUND + ALPHABET_SIZE;
 static const char SORTED_ALPHABETS_BY_NORMAL_FREQ[] = {'j', 'z', 'q', 'k', 'x', 'v', 'g', 'w', 'b', 'p', 'y', 'f', 'c', 'u', 'm', 'd', 'l', 'h', 'o', 'n', 'i', 'r', 's', 'a', 't', 'e'};
+
+struct letter_freq{
+    char letter;
+    int freq;
+};
+typedef std::function<bool(letter_freq, letter_freq)> comparator;
 
 static std::string prettify(std::string str);
 static std::set<letter_freq, comparator>get_char_frequencies(std::string str);
@@ -75,7 +78,7 @@ static int get_mode_shift(std::string str){
     int freq_rank = 0;
     int shift;
     for (letter_freq e : sorted_letter_frequencies) {
-        shift = SORTED_ALPHABETS_BY_NORMAL_FREQ[freq_rank] - e.first;
+        shift = SORTED_ALPHABETS_BY_NORMAL_FREQ[freq_rank] - e.letter;
         shift_values.push_back(shift);
         freq_rank += 1;
     }
@@ -134,15 +137,15 @@ static std::set<letter_freq, comparator> get_char_frequencies(std::string str) {
     }
     std::vector<letter_freq> letter_frequencies_pairs;
     char c = 'a';
-    for (int i: letter_frequencies){
-        letter_frequencies_pairs.emplace_back(c, i);
+    for (int f: letter_frequencies){
+        letter_frequencies_pairs.push_back(letter_freq{c, f});
         ++c;
     }
 
     // Sorts by second element of pair (frequency).
     static const comparator comp =
-            [](letter_freq freq1 ,letter_freq freq2){
-                return freq1.second < freq2.second;
+            [](letter_freq pair1 ,letter_freq pair2){
+                return pair1.freq < pair2.freq;
             };
 
 
