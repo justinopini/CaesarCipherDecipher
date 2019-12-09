@@ -64,22 +64,6 @@ int main() {
 }
 
 /**
- * Removes punctuations and makes all letters lower case.
- * @param str
- * @return 'pretiffied' str
- */
-std::string static prettify(std::string str){
-    for (char &c : str) {
-        c = static_cast<char>(tolower(c));
-        if(ispunct(c)) {
-            c = ' ';
-        }
-    }
-
-    return str;
-}
-
-/**
  *
  * @param str
  * @return The most frequent shift based from the normal distribution in English.
@@ -118,6 +102,22 @@ static int get_mode_shift(std::string str){
     }
 
     return mode_shift;
+}
+
+/**
+ * Removes punctuations and makes all letters lower case.
+ * @param str
+ * @return 'pretiffied' str
+ */
+std::string static prettify(std::string str){
+    for (char &c : str) {
+        c = static_cast<char>(tolower(c));
+        if(ispunct(c)) {
+            c = ' ';
+        }
+    }
+
+    return str;
 }
 
 /**
