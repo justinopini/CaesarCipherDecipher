@@ -110,7 +110,7 @@ static int get_mode_shift(std::string str){
  * @param str
  * @return 'pretiffied' str
  */
-std::string static prettify(std::string str){
+static std::string prettify(std::string str){
     for (char &c : str) {
         c = static_cast<char>(tolower(c));
         if(ispunct(c)) {
