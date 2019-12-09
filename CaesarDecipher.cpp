@@ -45,19 +45,8 @@ int main() {
     int mode_shift = get_mode_shift(file_content);
 
     //Decodes message with mode shift value.
-    char decoded_letter;
     for (char &c : file_content){
-        if (isalpha(c)) {
-            decoded_letter = decode_char(static_cast<char>(tolower(c)), mode_shift);
-
-            //Restores capitalization.
-            if (isupper(c)) {
-                c = static_cast<char>(toupper(decoded_letter));
-            } else{
-                c = decoded_letter;
-            }
-
-        }
+        c = decode_char(c, mode_shift);
     }
 
     write(file_name, file_content);
@@ -128,6 +117,7 @@ static std::string prettify(std::string str){
  * @return a set of pairs that can be iterated through letter frequency order
  */
 static std::set<letter_freq, comparator> get_char_frequencies(std::string str) {
+    //Bucket frequencies of letters.
     int letter_frequencies[ALPHABET_SIZE] = {0};
     int int_char;
     for (char c: str) {
@@ -162,17 +152,27 @@ static std::set<letter_freq, comparator> get_char_frequencies(std::string str) {
  * @return decoded c
  */
 static char decode_char(char c, int shift){
-    int int_letter = c - ASCII_ALPHA_LOWER_BOUND;
-    int_letter = (int_letter + shift) % ALPHABET_SIZE;
-    int_letter += ASCII_ALPHA_LOWER_BOUND;
+    //Only decodes alphabets.
+    if (isalpha(c)) {
+        int int_letter = static_cast<char>(tolower(c)) - ASCII_ALPHA_LOWER_BOUND;
+        int_letter = (int_letter + shift) % ALPHABET_SIZE;
+        int_letter += ASCII_ALPHA_LOWER_BOUND;
 
-    // In case shift is negative.
-    if(int_letter < ASCII_ALPHA_LOWER_BOUND){
-        int overflow = ASCII_ALPHA_LOWER_BOUND - int_letter;
-        int_letter = ASCII_ALPHA_UPPER_BOUND - overflow;
+        // In case shift is negative.
+        if (int_letter < ASCII_ALPHA_LOWER_BOUND) {
+            int overflow = ASCII_ALPHA_LOWER_BOUND - int_letter;
+            int_letter = ASCII_ALPHA_UPPER_BOUND - overflow;
+        }
+
+        //Restore capitalization.
+        if (isupper(c)) {
+            int_letter -= 32;
+        }
+
+        return static_cast<char>(int_letter);
+    } else{
+        return c;
     }
-    return static_cast<char>(int_letter);
-
 }
 
 /**
