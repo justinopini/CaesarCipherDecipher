@@ -27,8 +27,8 @@ static void write(const std::string &, const std::string &);
 
 int main() {
     //Get the file name and set up the stream.
-    std::string file_name;
-    std::ifstream input;
+    static std::string file_name;
+    static std::ifstream input;
     while (!input.is_open() || input.fail()) {
         std::cout<< " Please enter a valid file name to be decrypted: ";
         std::cin >> file_name;
@@ -39,11 +39,11 @@ int main() {
     std::string file_content((std::istreambuf_iterator<char>(input)), (std::istreambuf_iterator<char>()));
     input.close();
 
-    int mode_shift = get_mode_shift(file_content);
+    static int mode_shift = get_mode_shift(file_content);
 
     //Decodes message with mode shift value.
-    char decoded_letter;
-    int index = 0;
+    static char decoded_letter;
+    static int index = 0;
     for (char c : file_content){
         if (isalpha(c)) {
             decoded_letter = decode_char(static_cast<char>(tolower(c)), mode_shift);
@@ -74,8 +74,8 @@ static int get_mode_shift(std::string str){
     std::vector<int > shift_values;
 
     // Calculate each individual shift
-    int freq_rank = 0;
-    int shift;
+    static int freq_rank = 0;
+    static int shift;
     for (letter_freq e : sorted_letter_frequencies) {
         shift = SORTED_ALPHABETS_BY_NORMAL_FREQ[freq_rank] - e.first;
         shift_values.push_back(shift);
@@ -84,8 +84,8 @@ static int get_mode_shift(std::string str){
 
 
     //Find mode shift
-    int highest_count, current_count = 0;
-    int mode_shift, current_shift = 0;
+    static int highest_count, current_count = 0;
+    static int mode_shift, current_shift = 0;
     std::sort(shift_values.begin(), shift_values.end());
     for(int s : shift_values)
     {
@@ -94,6 +94,7 @@ static int get_mode_shift(std::string str){
         } else{
             if (current_count > highest_count){
                 mode_shift = s;
+                highest_count = current_count;
             }
             current_count = 0;
             current_shift = s;
@@ -126,8 +127,8 @@ std::string static prettify(std::string str){
  * @return a set of pairs that can be iterated through letter frequency order
  */
 static std::set<letter_freq, comparator> get_char_frequencies(std::string str) {
-    int letter_frequencies[ALPHABET_SIZE] = {0};
-    int int_char;
+    static int letter_frequencies[ALPHABET_SIZE] = {0};
+    static int int_char;
     for (char c: str) {
         int_char = c - ASCII_ALPHA_LOWER_BOUND;
         if (int_char >= 0)
@@ -160,14 +161,14 @@ static std::set<letter_freq, comparator> get_char_frequencies(std::string str) {
  * @return decoded c
  */
 static char decode_char(char c, int shift){
-    int int_letter = 0;
+    static int int_letter, overflow = 0;
     int_letter = c - ASCII_ALPHA_LOWER_BOUND;
     int_letter = (int_letter + shift) % ALPHABET_SIZE;
     int_letter += ASCII_ALPHA_LOWER_BOUND;
 
     // In case shift is negative.
     if(int_letter < ASCII_ALPHA_LOWER_BOUND){
-        int overflow = ASCII_ALPHA_LOWER_BOUND - int_letter;
+        overflow = ASCII_ALPHA_LOWER_BOUND - int_letter;
         int_letter = ASCII_ALPHA_UPPER_BOUND - overflow;
     }
     return static_cast<char>(int_letter);
