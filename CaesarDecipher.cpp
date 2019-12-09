@@ -43,20 +43,18 @@ int main() {
 
     //Decodes message with mode shift value.
     char decoded_letter;
-    int index = 0;
-    for (char c : file_content){
+    for (char &c : file_content){
         if (isalpha(c)) {
             decoded_letter = decode_char(static_cast<char>(tolower(c)), mode_shift);
 
             //Restores capitalization.
             if (isupper(c)) {
-                file_content[index] = static_cast<char>(toupper(decoded_letter));
+                c = static_cast<char>(toupper(decoded_letter));
             } else{
-                file_content[index] = decoded_letter;
+                c = decoded_letter;
             }
 
         }
-        ++index;
     }
 
     write(file_name, file_content);
@@ -161,8 +159,7 @@ static std::set<letter_freq, comparator> get_char_frequencies(std::string str) {
  * @return decoded c
  */
 static char decode_char(char c, int shift){
-    int int_letter = 0;
-    int_letter = c - ASCII_ALPHA_LOWER_BOUND;
+    int int_letter = c - ASCII_ALPHA_LOWER_BOUND;
     int_letter = (int_letter + shift) % ALPHABET_SIZE;
     int_letter += ASCII_ALPHA_LOWER_BOUND;
 
