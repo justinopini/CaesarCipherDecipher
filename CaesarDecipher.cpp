@@ -86,7 +86,7 @@ static int get_mode_shift(std::string str){
                 mode_shift = s;
                 highest_count = current_count;
             }
-            current_count = 0;
+            current_count = 1;
             current_shift = s;
         }
 
