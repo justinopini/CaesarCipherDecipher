@@ -69,7 +69,7 @@ static int get_mode_shift(std::string str){
     for (letter_freq e : sorted_letter_frequencies) {
         shift = SORTED_ALPHABETS_BY_NORMAL_FREQ[freq_rank] - e.letter;
         shift_values.push_back(shift);
-        freq_rank += 1;
+        ++freq_rank;
     }
 
 
